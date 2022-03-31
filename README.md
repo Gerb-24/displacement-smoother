@@ -1,2 +1,2 @@
 # displacement_editor
- Hammer extension to create smooth displacements
+An extension for Hammer to create smooth displacements.
