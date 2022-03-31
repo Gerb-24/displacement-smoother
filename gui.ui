@@ -211,7 +211,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>../../../Inkscape/python/appname.png</pixmap>
+    <pixmap>appname.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
