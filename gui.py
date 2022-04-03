@@ -64,8 +64,10 @@ Open vmf before compiling''')
 
     def topTexture_setter( self, text ):
         self.topTexture = text
+
     def sideTexture_setter( self, text ):
         self.sideTexture = text
+        
     def compile( self ):
         def smoothness_returner():
             for btn_index in range(len(self.smoothRBtnList)):

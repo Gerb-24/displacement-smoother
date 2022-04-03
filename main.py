@@ -166,14 +166,15 @@ class Top:
             for o_index in range(len(self.orient)):
                 if self.orient[ o_index ].x == start[0] and self.orient[ o_index ].y == start[1]:
                     return o_index
+        if sp_index_in_orient() == None:
+            return
         sp_index = sp_index_in_orient()
-        if sp_index != 1:
-            new_orient = []
-            for o_index in range(len(self.orient)):
-                new_orient.append(self.orient[(o_index+sp_index-1)%4])
-            self.orient = new_orient
-            self.side.get_displacement().startposition = Vertex(*self.orient[0], self.z)
-            self.startposition = Vertex(*self.orient[0], self.z)
+        new_orient = []
+        for o_index in range(len(self.orient)):
+            new_orient.append(self.orient[(o_index+sp_index-1)%4])
+        self.orient = new_orient
+        self.side.get_displacement().startposition = Vertex(*self.orient[0], self.z)
+        self.startposition = Vertex(*self.orient[0], self.z)
 
     def set_to_zero(self):
         for i in range(self.matrix.size):
@@ -198,30 +199,30 @@ class Top:
 
 
     def map_to_bezier( self, index, points, start):
+        # self.identify(start)
         self.orient_changer(start)
-
-        power = self.matrix.size-1
-        if power == 8:
-            ( start_val, end_val ) = ( 4,9 ) if index == 0 else ( 0, 5 )
-            bez_factor = -4 if index == 0 else 4
-        elif power == 4:
-            ( start_val, end_val ) = ( 2, 5 ) if index == 0 else ( 0, 3 )
-            bez_factor = -2 if index == 0 else 2
-
-        for j in range(self.matrix.size):
-            if j in range(start_val, end_val):
-                for i in range(self.matrix.size):
-                    p = self.matrix.get(i, j)
-                    p_coord = np.array( [*plane(i/power, j/power, self.orient), self.z])
-                    align_coord = np.array( [*plane(0, j/power, self.orient), self.z])
-                    bez_coord =(1-i/power)*align_coord + (i/power) * np.array(
-                        [
-                        *bezier((j + bez_factor)/power, points),
-                        self.z
-                        ])
-                    new_coord = bez_coord - p_coord
-                    # new_coord = new_coord + bez_normal_coord(k, j, factor)
-                    point_updater(p, new_coord)
+        # power = self.matrix.size-1
+        # if power == 8:
+        #     ( start_val, end_val ) = ( 4,9 ) if index == 0 else ( 0, 5 )
+        #     bez_factor = -4 if index == 0 else 4
+        # elif power == 4:
+        #     ( start_val, end_val ) = ( 2, 5 ) if index == 0 else ( 0, 3 )
+        #     bez_factor = -2 if index == 0 else 2
+        #
+        # for j in range(self.matrix.size):
+        #     if j in range(start_val, end_val):
+        #         for i in range(self.matrix.size):
+        #             p = self.matrix.get(i, j)
+        #             p_coord = np.array( [*plane(i/power, j/power, self.orient), self.z])
+        #             align_coord = np.array( [*plane(0, j/power, self.orient), self.z])
+        #             bez_coord =(1-i/power)*align_coord + (i/power) * np.array(
+        #                 [
+        #                 *bezier((j + bez_factor)/power, points),
+        #                 self.z
+        #                 ])
+        #             new_coord = bez_coord - p_coord
+        #             # new_coord = new_coord + bez_normal_coord(k, j, factor)
+        #             point_updater(p, new_coord)
 
 class Corner:
     def __init__(self, side, pointlist, z_value, start):
@@ -424,13 +425,13 @@ def main_func(filepath, t_tex, v_tex, smooth_factor=1 ):
         mp2 =   line( 1 - smoothness, stack2.start, stack2.end )
         end =   line( 1/2, stack2.start, stack2.end )
         points = [ start, mp1, mp2, end ]
-        stack1.map_to_bezier( 0, points )
-        stack2.map_to_bezier( 1, points )
+        # stack1.map_to_bezier( 0, points )
+        # stack2.map_to_bezier( 1, points )
         stack1.top.map_to_bezier( 0, points, stack1.start)
         stack2.top.map_to_bezier( 1, points, stack2.start)
 
-        corner = create_corner(vmf, [stack1.start, stack1.end, stack2.end], t_tex)
-        if corner:
-            corner.map_to_bezier( points )
+        # corner = create_corner(vmf, [stack1.start, stack1.end, stack2.end], t_tex)
+        # if corner:
+        #     corner.map_to_bezier( points )
 
     vmf.export(filepath)
