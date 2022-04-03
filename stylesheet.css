@@ -41,3 +41,8 @@ QTextEdit {
     border: 0px;
     border-radius: 5px;
 }
+
+QRadioButton::indicator {
+    width: 50px;
+    height: 50px;
+}

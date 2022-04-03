@@ -36,15 +36,49 @@ Open vmf before compiling''')
 
         load_tex(self)
 
+        self.smoothRBtnList = [
+            self.smooth0RBtn,
+            self.smooth1RBtn,
+            self.smooth2RBtn,
+            self.smooth3RBtn,
+        ]
+
+        for btn_index in range(len(self.smoothRBtnList)):
+            btn = self.smoothRBtnList[btn_index]
+            if btn_index == 0:
+                radio_style = f"""
+                QRadioButton#smooth{btn_index}RBtn::indicator::unchecked {{
+                    image: url(ui_images/smooth{btn_index}_disabled.png);
+                }}
+                """
+            else:
+                radio_style = f"""
+                QRadioButton#smooth{btn_index}RBtn::indicator::unchecked {{
+                    image: url(ui_images/smooth{btn_index}_unchecked.png);
+                }}
+                QRadioButton#smooth{btn_index}RBtn::indicator::checked {{
+                    image: url(ui_images/smooth{btn_index}_checked.png);
+                }}
+                """
+            btn.setStyleSheet(radio_style)
+
     def topTexture_setter( self, text ):
         self.topTexture = text
     def sideTexture_setter( self, text ):
         self.sideTexture = text
     def compile( self ):
+        def smoothness_returner():
+            for btn_index in range(len(self.smoothRBtnList)):
+                btn = self.smoothRBtnList[btn_index]
+                if btn.isChecked():
+                    return btn_index
+
+        smoothness = smoothness_returner()
         self.compileLogTe.setText("Compiling...")
         self.styleLog("standard")
+
         try:
-            main_func( self.fileName, self.topTexture, self.sideTexture )
+            main_func( self.fileName, self.topTexture, self.sideTexture, smoothness )
             self.styleLog("succes")
             self.compileLogTe.setText('''
 Compiled succesfully.''')
