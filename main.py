@@ -8,16 +8,28 @@ class preSideDisp:
     def __init__(self, side, solid):
         self.side = side
         self.solid = solid
-        if side.get_displacement() == None:
+        if side.get_displacement == None:
             raise SideTextureUsedForNonDisp()
+        self.max, self.min = self.min_max_creator()
+        self.start, self.end = self.start_end_creator()
+
         self.matrix = side.get_displacement().matrix
 
-        self.start, self.end, self.max, self.min = self.start_end_creator()
+    def identify( self ):
+        for i in range(self.matrix.size):
+            for j in range(self.matrix.size):
+                p = self.matrix.get(i, j)
+                if (i,j) == (0,0):
+                    p.set(Vertex(0,0,1), 1*128)
+
+    def min_max_creator(self):
+        vertexList = self.side.get_vertices()
+        z_list = [vertex.z for vertex in vertexList]
+        return max(z_list), min(z_list)
 
     def start_end_creator(self):
         vertexList = self.side.get_vertices()
         startposition = self.side.get_displacement().startposition
-        z_list = [vertex.z for vertex in vertexList]
 
         x_y_list = [(vertex.x,vertex.y) for vertex in vertexList]
         new_x_y_list = []
@@ -27,11 +39,11 @@ class preSideDisp:
         if startposition.x == new_x_y_list[0][0] and startposition.y == new_x_y_list[0][1]:
             start = new_x_y_list[0]
             end = new_x_y_list[1]
-            return start, end, max(z_list), min(z_list)
+            return start, end
         else:
             start = new_x_y_list[1]
             end = new_x_y_list[0]
-            return start, end, max(z_list), min(z_list)
+            return start, end
 
 class Stack:
     def __init__(self, psd_list, top):
@@ -47,8 +59,8 @@ class Stack:
             for index in range(len(pl)):
                 if (pl[index].x, pl[index].y) == psd.start:
                     if (pl[(index - 1)%4].x, pl[(index-1)%4].y) == psd.end:
-                        return False
-            return True
+                        return True
+            return False
 
         for psd in psd_list:
             if change_sp_checker( psd ):
@@ -136,13 +148,13 @@ class tDispSide:
         if side.get_displacement() == None:
             raise TopTextureUsedForNonDisp()
         self.matrix = side.get_displacement().matrix
-        self.pointlist = pointlist
         self.startposition = side.get_displacement().startposition
 
         sympy_pointlist = [Point(point.x, point.y) for point in pointlist]
         sympy_startposition = Point(self.startposition.x, self.startposition.y )
 
         self.orient = pointlist_to_orient(sympy_pointlist, sympy_startposition)
+        self.pointlist = [Vertex(point.x, point.y, self.z) for point in self.orient]
 
     def orient_changer(self, start):
         def sp_index_in_orient():
@@ -166,18 +178,18 @@ class tDispSide:
                 point_updater( p, coord )
 
     def identify( self, start ):
-        self.orient_changer( start )
+        # self.orient_changer( start )
         for i in range(self.matrix.size):
             for j in range(self.matrix.size):
                 p = self.matrix.get(i, j)
                 if (i,j) == (0,0):
                     p.set(Vertex(0,0,1), 1*128)
-                # elif (i,j) == (8,0):
-                #     p.set(Vertex(0,0,1), 2*128)
-                # elif (i,j) == (8,8):
-                #     p.set(Vertex(0,0,1), 3*128)
-                # elif (i,j) == (0,8):
-                #     p.set(Vertex(0,0,1), 4*128)
+                elif (i,j) == (8,0):
+                    p.set(Vertex(0,0,1), 2*128)
+                elif (i,j) == (8,8):
+                    p.set(Vertex(0,0,1), 3*128)
+                elif (i,j) == (0,8):
+                    p.set(Vertex(0,0,1), 4*128)
 
 
     def map_to_bezier( self, index, points, start):
@@ -228,9 +240,12 @@ def create_stack_neighbour_list( stack_list ):
 def create_stack_list( vmf, t_tex, v_tex):
     psd_list = []
     for solid in vmf.get_solids():
-        for side in solid.get_texture_sides( v_tex ):
-            psd = preSideDisp(side, solid)
-            psd_list.append(psd)
+        for side in solid.get_displacement_sides():
+            # print(side.material)
+            # print(v_tex)
+            if side.material == v_tex.upper():
+                psd = preSideDisp(side, solid)
+                psd_list.append(psd)
     psd_x_y_trackering_list = []
     psd_x_y_sortering_list = []
     for psd in psd_list:
@@ -295,5 +310,6 @@ def main_func(filepath, t_tex, v_tex):
         stack2.map_to_bezier( 1, points )
         stack1.top.map_to_bezier( 0, points, stack1.start)
         stack2.top.map_to_bezier( 1, points, stack2.start)
+
 
     vmf.export(filepath)

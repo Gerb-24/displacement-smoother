@@ -1,4 +1,5 @@
 import sys
+import traceback
 from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QTextEdit, QVBoxLayout
 from PyQt6 import uic, QtCore
 from PyQt6.QtGui import QIcon
@@ -62,7 +63,8 @@ It seems like you used the toptexture on a face that has no displacement on it.'
             self.compileLogTe.setText('''
 Compile Error: SideTextureUsedForNonDisp
 It seems like you used the sidetexture on a face that has no displacement on it.''')
-        except Exception:
+        except Exception as e:
+            print(traceback.format_exc())
             self.styleLog("error")
             self.compileLogTe.setText('''
 Compile Error: GeneralError

@@ -1,1 +1,1 @@
-{'dirName': '', 'topTexture': 'customdev/dev_measurewall01blu', 'sideTexture': 'dev/dev_blendmeasure2'}
+{'dirName': 'C:/Program Files (x86)/Steam/steamapps/common/Team Fortress 2/my maps/python-vmfs/displacement_editor_vmfs', 'topTexture': 'customdev/dev_measurewall01blu', 'sideTexture': 'dev/dev_blendmeasure2'}
