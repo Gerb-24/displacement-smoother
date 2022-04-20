@@ -8,7 +8,7 @@ This is build using [PyVMF](https://github.com/GorangeNinja/PyVMF) by GorangeNin
 [Displacement Smoother V12](https://github.com/Gerb-24/displacement-smoother/releases/latest)
 
 ## Licenses
-The GUI part of this project, i.e. gui.py, filemanagement.py etc use the GPLv3 License as they use PyQt6
+The GUI part of this project, i.e. gui.py, filemanagement.py etc use the GPLv3 License as they use PyQt6  
 The actual python code, i.e. main.py etc use the MIT License as they use PyVMF
 
 ## User Interface
